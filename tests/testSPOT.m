@@ -62,6 +62,13 @@ initTestSuite;
     function testSPOTworks_dampedLS(opt)
 
         x = lsmr(opt.A,opt.b,10,[],[],[],[],[],opt.show_logs);
+        
+    function testBadAFails(opt)
+        
+        Abad = @(x)max(x);
+        f = @() lsmr(Abad,opt.b,[],[],[],[],[],[],opt.show_logs);
+        
+        assertExceptionThrown(f, 'SOL:lsmr:Atype');
     
 
 

@@ -99,7 +99,18 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
 % 14 Apr 2010: Updated documentation.
 % 03 Jun 2010: LSMR with local and/or full reorthogonalization of v_k.
 % 10 Mar 2011: Bug fix in reorthgonalization. (suggested by David Gleich)
-
+% 27 Jun 2013: Code branched from Mathworks Exchange to to ensure compatibility
+%              with [SPOT](http://www.cs.ubc.ca/labs/scl/spot/) and
+%              [pSPOT](https://github.com/slimgroup/pSPOT). LSMR should work with
+%              `SPOT/pSPOT` linear poerators as `A`, and both numeirc and distributed arrays
+%              as `b`.
+%
+% ## Fork maintainer:
+% Tim Tai-Yi Lin                  tlin@eos.ubc.cs
+% Seismic Laboratory for Imaging and Modeling
+% University of British Columbia
+%
+% ## Original authors:
 % David Chin-lung Fong            clfong@stanford.edu
 % Institute for Computational and Mathematical Engineering
 % Stanford University
@@ -111,14 +122,11 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
 
   % Initialize.
 
-  if isa(A,'numeric')
-    explicitA = true;
-  elseif isa(A,'function_handle')
+  if isa(A,'function_handle')
     explicitA = false;
   else
-    error('SOL:lsmr:Atype','%s','A must be numeric or a function handle');
+    explicitA = true;
   end
-    
   msg = ['The exact solution is  x = 0                              '
          'Ax - b is small enough, given atol, btol                  '
          'The least-squares solution is good enough, given atol     '
@@ -142,12 +150,29 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
   if beta > 0
     u  = u/beta;
   end
-
+  
+  % compute first gradient, but also determine whether A is of acceptable type by duck-typing
   if explicitA
-    v = A'*u;
+    try
+      v = A'*u;
+    catch ME
+      if strcmp(ME.identifier,'MATLAB:UndefinedFunction');
+        error('SOL:lsmr:Atype','%s','Error applying A''*b, ensure A is compatible with ctranspose and mtimes operators, or a function handle');
+      else
+        rethrow(ME)
+      end
+    end
     [m n] = size(A);
-  else  
-    v = A(u,2);
+  else
+    try
+      v = A(u,2);
+    catch ME
+      if strcmp(ME.identifier,'MATLAB:TooManyInputs');
+        error('SOL:lsmr:Atype','%s','Error calling A(b,2), make sure A is an appropriate function handle as specified in the help text');
+      else
+        rethrow(ME)
+      end
+    end
     m = size(b,1);
     n = size(v,1);
   end
