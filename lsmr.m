@@ -432,10 +432,10 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
           fprintf('\n\n%s%s'    , hdg1 , hdg2  )
 	end
 	pcount = pcount + 1;
-        fprintf('\n%6g %12.5e'  , itn  , x(1)  )
-        fprintf(' %10.3e %10.3e', normr, normAr)
-        fprintf('  %8.1e %8.1e' , test1, test2 )
-        fprintf(' %8.1e %8.1e'  , normA, condA )
+        fprintf('\n%6g %12.5e'  , itn  , undist(x(1))  )
+        fprintf(' %10.3e %10.3e', undist(normr), undist(normAr))
+        fprintf('  %8.1e %8.1e' , undist(test1), undist(test2) )
+        fprintf(' %8.1e %8.1e'  , undist(normA), undist(condA) )
       end
     end
 
@@ -447,9 +447,9 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
   if show
     fprintf('\n\nLSMR finished')
     fprintf('\n%s', msg(istop+1,:))
-    fprintf('\nistop =%8g    normr =%8.1e'     , istop, normr )
-    fprintf('    normA =%8.1e    normAr =%8.1e', normA, normAr)
-    fprintf('\nitn   =%8g    condA =%8.1e'     , itn  , condA )
+    fprintf('\nistop =%8g    normr =%8.1e'     , istop, undist(normr) )
+    fprintf('    normA =%8.1e    normAr =%8.1e', undist(normA), undist(normAr))
+    fprintf('\nitn   =%8g    condA =%8.1e'     , itn  , undist(condA) )
     fprintf('    normx =%8.1e\n', normx)
   end
 
