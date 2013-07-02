@@ -229,7 +229,6 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
 
   h    = v;
   hbar = zeros(n,1);
-  x    = zeros(n,1);
 
   % Initialize variables for estimation of ||r||.
 
@@ -264,9 +263,9 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
     test1 = 1;
     test2 = alpha/beta;
     fprintf('\n\n%s%s'      , hdg1 , hdg2   )
-    fprintf('\n%6g %12.5e'  , itn  , x(1)   )
-    fprintf(' %10.3e %10.3e', normr, normAr )
-    fprintf('  %8.1e %8.1e' , test1, test2  )
+    fprintf('\n%6g %12.5e'  , itn  , 0.0   )
+    fprintf(' %10.3e %10.3e', undist(normr), undist(normAr) )
+    fprintf('  %8.1e %8.1e' , undist(test1), undist(test2)  )
   end
 
 
@@ -338,7 +337,11 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
     % Update h, h_hat, x.
 
     hbar      = h - (thetabar*rho/(rhoold*rhobarold))*hbar;
-    x         = x + (zeta/(rho*rhobar))*hbar;
+    if exist('x','var')
+      x         = x + (zeta/(rho*rhobar))*hbar;
+    else % first iteration before x is initialized, take x = 0
+      x         = (zeta/(rho*rhobar))*hbar;
+    end
     h         = v - (thetanew/rho)*h;
 
     % Estimate of ||r||.
@@ -451,7 +454,7 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
     fprintf('\nistop =%8g    normr =%8.1e'     , istop, undist(normr) )
     fprintf('    normA =%8.1e    normAr =%8.1e', undist(normA), undist(normAr))
     fprintf('\nitn   =%8g    condA =%8.1e'     , itn  , undist(condA) )
-    fprintf('    normx =%8.1e\n', normx)
+    fprintf('    normx =%8.1e\n', undist(normx))
   end
 
 % end function lsmr
