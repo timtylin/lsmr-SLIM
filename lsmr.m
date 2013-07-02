@@ -228,7 +228,6 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
   sbar     = 0;
 
   h    = v;
-  hbar = zeros(n,1);
 
   % Initialize variables for estimation of ||r||.
 
@@ -335,13 +334,19 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
     zetabar   = - sbar*zetabar;
 
     % Update h, h_hat, x.
-
-    hbar      = h - (thetabar*rho/(rhoold*rhobarold))*hbar;
+    
+    if exist('hbar','var')
+      hbar      = h - (thetabar*rho/(rhoold*rhobarold))*hbar;
+    else
+      hbar      = h;
+    end
+    
     if exist('x','var')
       x         = x + (zeta/(rho*rhobar))*hbar;
     else % first iteration before x is initialized, take x = 0
       x         = (zeta/(rho*rhobar))*hbar;
     end
+    
     h         = v - (thetanew/rho)*h;
 
     % Estimate of ||r||.
