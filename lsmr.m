@@ -190,8 +190,9 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
   if nargin < 9 || isempty(show)     , show      = false;      end
 
   if show
-    fprintf('\n\nLSMR            Least-squares solution of  Ax = b')
-    fprintf('\nVersion 1.11                          09 Jun 2010')
+    fprintf('\n')
+    fprintf('\nLSMR-SLIM            Least-squares solution of  Ax = b')
+    fprintf('\nVersion DEVEL                                         ')
     fprintf('\nThe matrix A has %8g rows  and %8g cols', m,n)
     fprintf('\nlambda = %16.10e', lambda )
     fprintf('\natol   = %8.2e               conlim = %8.2e', atol,conlim)
