@@ -80,7 +80,7 @@ initTestSuite;
     
         A = distributed(opt.A);
         x = lsmr(A,opt.b,[],[],[],[],[],[],opt.show_logs);
-    
+        
         assertElementsAlmostEqual(undist(x), opt.x, 'absolute', opt.recov_tol);
     
     function testParallelAworks_dampedLS(opt)
